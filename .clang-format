@@ -1,6 +1,6 @@
 BasedOnStyle: llvm
 DerivePointerAlignment: true
-ColumnLimit: 80
+ColumnLimit: 90
 InsertTrailingCommas: Wrapped
 BinPackArguments: false
 BinPackParameters: false

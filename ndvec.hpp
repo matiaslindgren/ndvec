@@ -178,7 +178,8 @@ std::ostream& operator<<(std::ostream& os, const ndvec<Ts...>& v) {
 
 template <typename... Ts> std::istream& operator>>(std::istream& is, ndvec<Ts...>& v) {
   using axes = ndvec<Ts...>::axes_indices;
-  if (ndvec<Ts...> parsed; [&]<std::size_t... axis>(std::index_sequence<axis...>) -> std::istream& {
+  if (ndvec<Ts...> parsed;
+      [&]<std::size_t... axis>(std::index_sequence<axis...>) -> std::istream& {
         return (is >> ... >> parsed.template get<axis>());
       }(axes{})) {
     v = parsed;
