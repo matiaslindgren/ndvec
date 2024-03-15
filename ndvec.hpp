@@ -140,10 +140,10 @@ public:
   }
 };
 
-template <typename T> using ndvec1 = ndvec<T>;
-template <typename T> using ndvec2 = ndvec<T, T>;
-template <typename T> using ndvec3 = ndvec<T, T, T>;
-template <typename T> using ndvec4 = ndvec<T, T, T, T>;
+template <typename T> using vec1 = ndvec<T>;
+template <typename T> using vec2 = ndvec<T, T>;
+template <typename T> using vec3 = ndvec<T, T, T>;
+template <typename T> using vec4 = ndvec<T, T, T, T>;
 
 template <std::integral... Ts> struct std::hash<ndvec<Ts...>> {
   using ndvec = ndvec<Ts...>;
