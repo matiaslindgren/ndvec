@@ -46,8 +46,8 @@ template <typename T> void test_vec1() {
     vec1<T> v(1);
     assert_equal(
         std::format("{}", v),
-        std::format("vec1{}", std::tuple{1}),
-        "unexpected ndvec format"
+        std::format("ndvec1{}", std::tuple{1}),
+        "unexpected ndvec format with 1 element"
     );
   }
   {
@@ -110,8 +110,8 @@ template <typename T> void test_vec2() {
     vec2<T> v(1, 2);
     assert_equal(
         std::format("{}", v),
-        std::format("vec2{}", std::tuple{1, 2}),
-        "unexpected vec format"
+        std::format("ndvec2{}", std::tuple{1, 2}),
+        "unexpected ndvec format with 2 elements"
     );
   }
   {
@@ -192,8 +192,8 @@ template <typename T> void test_vec3() {
     vec3<T> v(1, 2, 3);
     assert_equal(
         std::format("{}", v),
-        std::format("vec3{}", std::tuple{1, 2, 3}),
-        "unexpected vec format"
+        std::format("ndvec3{}", std::tuple{1, 2, 3}),
+        "unexpected ndvec format with 3 elements"
     );
   }
   {
@@ -323,8 +323,8 @@ template <typename T> void test_vec4() {
     vec4<T> v(1, 2, 3, 4);
     assert_equal(
         std::format("{}", v),
-        std::format("vec4{}", std::tuple{1, 2, 3, 4}),
-        "unexpected vec format"
+        std::format("ndvec4{}", std::tuple{1, 2, 3, 4}),
+        "unexpected ndvec format with 4 elements"
     );
   }
   {
