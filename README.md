@@ -1,6 +1,6 @@
 # `ndvec`: constexpr Euclidean vector
 
-[godbolt](https://godbolt.org/z/Tcoqf39zE)
+[godbolt](https://godbolt.org/z/69haf33xn)
 
 ## Description
 
