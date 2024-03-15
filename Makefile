@@ -1,9 +1,9 @@
 CXXFLAGS ?= -std=c++23 -stdlib=libc++ -O3 -Wall -Wpedantic -Werror
 
 MAIN  := ./main.cpp
+TEST  := ./test.cpp
 NDVEC := ./ndvec.hpp
-CODE  := $(MAIN) $(NDVEC)
-OUT   := ./example
+CODE  := $(MAIN) $(TEST) $(NDVEC)
 
 .PHONY: clean
 clean:
@@ -13,5 +13,5 @@ clean:
 fmt: $(CODE)
 	@clang-format-18 --verbose -i $^
 
-$(OUT): $(CODE)
-	$(CXX) $(CXXFLAGS) -I $(NDVEC) $(MAIN) -o $@
+$(subst .cpp,,$(MAIN) $(TEST)): % : %.cpp $(NDVEC)
+	$(CXX) $(CXXFLAGS) -I $(NDVEC) $< -o $@ -lc++

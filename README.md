@@ -42,3 +42,9 @@ Disassembly of section .fini:
 ```
 ./run_image.sh
 ```
+
+## Test
+
+```
+make CXX=clang-18 test && ./test
+```
