@@ -109,6 +109,11 @@ public:
     return (*this - rhs).abs().sum();
   }
 
+  constexpr auto&& x(this auto&& self) noexcept { return self.template get<0>(); }
+  constexpr auto&& y(this auto&& self) noexcept { return self.template get<1>(); }
+  constexpr auto&& z(this auto&& self) noexcept { return self.template get<2>(); }
+  constexpr auto&& w(this auto&& self) noexcept { return self.template get<3>(); }
+
   constexpr ndvec& rotate_left() noexcept
     requires(ndim == 2)
   {
@@ -134,6 +139,11 @@ public:
     };
   }
 };
+
+template <typename T> using ndvec1 = ndvec<T>;
+template <typename T> using ndvec2 = ndvec<T, T>;
+template <typename T> using ndvec3 = ndvec<T, T, T>;
+template <typename T> using ndvec4 = ndvec<T, T, T, T>;
 
 template <std::integral... Ts> struct std::hash<ndvec<Ts...>> {
   using ndvec = ndvec<Ts...>;
