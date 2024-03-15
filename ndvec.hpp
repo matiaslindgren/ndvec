@@ -146,14 +146,14 @@ template <typename T> using vec3 = ndvec<T, T, T>;
 template <typename T> using vec4 = ndvec<T, T, T, T>;
 
 template <std::integral... Ts> struct std::hash<ndvec<Ts...>> {
-  using ndvec = ndvec<Ts...>;
-  using T = ndvec::value_type;
+  using vec = ndvec<Ts...>;
+  using T = vec::value_type;
   static constexpr auto slot_width{
-      std::numeric_limits<std::size_t>::digits / ndvec::ndim
+      std::numeric_limits<std::size_t>::digits / vec::ndim
   };
 
-  template <typename axes = ndvec::axes_indices>
-  constexpr auto operator()(const ndvec& v) const noexcept {
+  template <typename axes = vec::axes_indices>
+  constexpr auto operator()(const vec& v) const noexcept {
     return [&]<std::size_t... axis>(std::index_sequence<axis...>) {
       return (... | (std::hash<T>{}(v.template get<axis>()) << (slot_width * axis)));
     }(axes{});
