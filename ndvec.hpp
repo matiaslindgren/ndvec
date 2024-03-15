@@ -21,33 +21,16 @@ struct ndvec {
 
   constexpr explicit ndvec(value_type x, Ts... rest) : elements(x, rest...) {}
 
-  // TODO deducing this
-  template <std::size_t axis>
+  template <std::size_t axis, typename Self>
     requires(axis < ndim)
-  constexpr value_type& get() noexcept {
-    return std::get<axis>(elements);
+  constexpr auto&& get(this Self&& self) noexcept {
+    return std::get<axis>(self.elements);
   }
-  template <std::size_t axis>
-    requires(axis < ndim)
-  constexpr const value_type& get() const noexcept {
-    return std::get<axis>(elements);
-  }
-
-  // TODO deducing this
-  constexpr value_type& x() noexcept { return get<0>(); }
-  constexpr value_type& y() noexcept { return get<1>(); }
-  constexpr value_type& z() noexcept { return get<2>(); }
-  constexpr const value_type& x() const noexcept { return get<0>(); }
-  constexpr const value_type& y() const noexcept { return get<1>(); }
-  constexpr const value_type& z() const noexcept { return get<2>(); }
-
-  [[nodiscard]] constexpr auto operator<=>(const ndvec&) const noexcept = default;
 
 private:
   template <typename Fn, std::size_t... axes, typename... Args>
     requires(
-        (... and (axes < ndim))
-        and (... and std::same_as<ndvec, std::decay_t<Args>>)
+        (... and (axes < ndim)) and (... and std::same_as<ndvec, std::decay_t<Args>>)
     )
   constexpr ndvec&
   apply_impl(Fn&& fn, std::index_sequence<axes...>, Args&&... args) noexcept {
@@ -101,9 +84,7 @@ public:
 
   [[nodiscard]] constexpr ndvec abs() const noexcept {
     ndvec res{*this};
-    return res.apply([](value_type val) noexcept -> value_type {
-      return std::abs(val);
-    });
+    return res.apply([](value_type val) noexcept -> value_type { return std::abs(val); });
   }
 
   [[nodiscard]] constexpr ndvec signum() const noexcept {
@@ -121,6 +102,8 @@ public:
         elements
     );
   }
+
+  [[nodiscard]] constexpr auto operator<=>(const ndvec&) const noexcept = default;
 
   [[nodiscard]] constexpr value_type distance(const ndvec& rhs) const noexcept {
     return (*this - rhs).abs().sum();
@@ -162,15 +145,12 @@ template <std::integral... Ts> struct std::hash<ndvec<Ts...>> {
   template <typename axes = ndvec::axes_indices>
   constexpr auto operator()(const ndvec& v) const noexcept {
     return [&]<std::size_t... axis>(std::index_sequence<axis...>) {
-      return (
-          ... | (std::hash<T>{}(v.template get<axis>()) << (slot_width * axis))
-      );
+      return (... | (std::hash<T>{}(v.template get<axis>()) << (slot_width * axis)));
     }(axes{});
   }
 };
 
-template <std::formattable<char>... Ts>
-struct std::formatter<ndvec<Ts...>, char> {
+template <std::formattable<char>... Ts> struct std::formatter<ndvec<Ts...>, char> {
   template <typename ParseContext> constexpr auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
@@ -186,11 +166,9 @@ std::ostream& operator<<(std::ostream& os, const ndvec<Ts...>& v) {
   return os << std::format("{}", v);
 }
 
-template <typename... Ts>
-std::istream& operator>>(std::istream& is, ndvec<Ts...>& v) {
-  using axes = ndvec<Ts...>::axes;
-  if (ndvec<Ts...> parsed;
-      [&]<std::size_t... axis>(std::index_sequence<axis...>) {
+template <typename... Ts> std::istream& operator>>(std::istream& is, ndvec<Ts...>& v) {
+  using axes = ndvec<Ts...>::axes_indices;
+  if (ndvec<Ts...> parsed; [&]<std::size_t... axis>(std::index_sequence<axis...>) -> std::istream& {
         return (is >> ... >> parsed.template get<axis>());
       }(axes{})) {
     v = parsed;
