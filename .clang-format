@@ -1,0 +1,11 @@
+BasedOnStyle: llvm
+DerivePointerAlignment: true
+ColumnLimit: 80
+InsertTrailingCommas: Wrapped
+BinPackArguments: false
+BinPackParameters: false
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BreakBeforeBinaryOperators: All
+AlignOperands: Align
+AlignAfterOpenBracket: BlockIndent
