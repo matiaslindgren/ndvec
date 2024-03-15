@@ -1,4 +1,8 @@
-# `ndvec`: N-dimensional `constexpr` Euclidean vector
+# `ndvec`: constexpr Euclidean vector
+
+[godbolt](https://godbolt.org/z/Tcoqf39zE)
+
+## Description
 
 Consider this code from main.cpp:
 ```c++
