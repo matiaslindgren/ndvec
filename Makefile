@@ -7,7 +7,7 @@ CODE  := $(MAIN) $(TEST) $(NDVEC)
 
 .PHONY: clean
 clean:
-	$(RM) $(OUT)
+	$(RM) main test
 
 .PHONY: fmt
 fmt: $(CODE)
