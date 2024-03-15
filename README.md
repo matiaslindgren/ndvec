@@ -12,16 +12,16 @@ int main() {
 ```
 Compiling with Clang 18
 ```
-make CXX=clang-18 example
+make CXX=clang-18 main
 ```
 The program exits with 48
 ```
-./example || echo $?
+./main || echo $?
 # output: 48
 ```
 Disassembling the output of Clang 18
 ```sh
-objdump --disassemble example | grep --context 5 '<main>'
+objdump --disassemble main | grep --context 5 '<main>'
 ```
 We see the main function compiles to just `return 48`:
 ```
