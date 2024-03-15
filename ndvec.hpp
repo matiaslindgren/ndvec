@@ -21,11 +21,18 @@ struct ndvec {
 
   constexpr explicit ndvec(value_type x, Ts... rest) : elements(x, rest...) {}
 
-  template <std::size_t axis, typename Self>
+  template <std::size_t axis>
     requires(axis < ndim)
-  constexpr auto&& get(this Self&& self) noexcept {
-    return std::get<axis>(self.elements);
+  constexpr const value_type& get() const noexcept {
+    return std::get<axis>(elements);
   }
+
+  template <std::size_t axis>
+    requires(axis < ndim)
+  constexpr value_type& get() noexcept {
+    return std::get<axis>(elements);
+  }
+
 
 private:
   template <typename Fn, std::size_t... axes, typename... Args>
