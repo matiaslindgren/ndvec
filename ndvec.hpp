@@ -12,7 +12,7 @@ template <typename T, std::same_as<T>... Ts>
   requires(std::regular<T> and std::is_arithmetic_v<T>)
 struct ndvec {
   static constexpr std::size_t ndim{sizeof...(Ts) + 1};
-  std::tuple<T, Ts...> elements;
+  std::tuple<T, Ts...> elements{};
 
   using value_type = T;
   using axes_indices = std::make_index_sequence<ndim>;
@@ -34,28 +34,28 @@ struct ndvec {
   }
 
 private:
+  template <std::size_t axis, typename Fn, typename... Args>
+    requires(axis < ndim and (... and std::same_as<ndvec, std::decay_t<Args>>))
+  constexpr void apply_on_axis(Fn&& fn, Args&&... args) noexcept {
+    get<axis>() = fn(args.template get<axis>()...);
+  }
+
   template <typename Fn, std::size_t... axes, typename... Args>
-    requires(
-        (... and (axes < ndim)) and (... and std::same_as<ndvec, std::decay_t<Args>>)
-    )
   constexpr ndvec&
   apply_impl(Fn&& fn, std::index_sequence<axes...>, Args&&... args) noexcept {
-    auto apply_on_axis{[&]<std::size_t axis>() {
-      get<axis>() = fn(args.template get<axis>()...);
-    }};
-    (apply_on_axis.template operator()<axes>(), ...);
+    (apply_on_axis<axes>(std::forward<Fn>(fn), *this, std::forward<Args>(args)...), ...);
     return *this;
   }
 
 public:
   template <std::regular_invocable<value_type> UnaryFn>
   constexpr ndvec& apply(UnaryFn&& fn) noexcept {
-    return apply_impl(std::forward<UnaryFn>(fn), axes_indices{}, *this);
+    return apply_impl(std::forward<UnaryFn>(fn), axes_indices{});
   }
 
   template <std::regular_invocable<value_type, value_type> BinaryFn>
   constexpr ndvec& apply(BinaryFn&& fn, const ndvec& rhs) noexcept {
-    return apply_impl(std::forward<BinaryFn>(fn), axes_indices{}, *this, rhs);
+    return apply_impl(std::forward<BinaryFn>(fn), axes_indices{}, rhs);
   }
 
   constexpr ndvec& operator+=(const ndvec& rhs) noexcept {
