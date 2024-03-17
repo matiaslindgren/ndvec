@@ -10,28 +10,35 @@
 
 template <typename T, std::same_as<T>... Ts>
   requires(std::regular<T> and std::is_arithmetic_v<T>)
-struct ndvec {
+class ndvec {
+public:
   static constexpr std::size_t ndim{sizeof...(Ts) + 1};
-  std::tuple<T, Ts...> elements{};
 
   using value_type = T;
+  using values_type = std::tuple<T, Ts...>;
   using axes_indices = std::make_index_sequence<ndim>;
 
+private:
+  values_type data{};
+
+public:
   constexpr ndvec() = default;
 
-  constexpr explicit ndvec(value_type x, Ts... rest) : elements(x, rest...) {}
+  constexpr explicit ndvec(value_type x, Ts... rest) : data(x, rest...) {}
 
   template <std::size_t axis>
     requires(axis < ndim)
   constexpr const value_type& get() const noexcept {
-    return std::get<axis>(elements);
+    return std::get<axis>(data);
   }
 
   template <std::size_t axis>
     requires(axis < ndim)
   constexpr value_type& get() noexcept {
-    return std::get<axis>(elements);
+    return std::get<axis>(data);
   }
+
+  constexpr const values_type& values() const noexcept { return data; }
 
 private:
   template <std::size_t axis, typename Fn, typename... Args>
@@ -105,7 +112,7 @@ public:
         [](std::same_as<value_type> auto... vs) noexcept -> value_type {
           return (... + vs);
         },
-        elements
+        data
     );
   }
 
@@ -152,37 +159,39 @@ template <typename T> using vec3 = ndvec<T, T, T>;
 template <typename T> using vec4 = ndvec<T, T, T, T>;
 
 template <std::integral... Ts> struct std::hash<ndvec<Ts...>> {
+private:
   using vec = ndvec<Ts...>;
+  using axes = vec::axes_indices;
   using T = vec::value_type;
   static constexpr auto slot_width{std::numeric_limits<std::size_t>::digits / vec::ndim};
 
-  template <typename axes = vec::axes_indices>
-  constexpr auto operator()(const vec& v) const noexcept {
-    return [&]<std::size_t... axis>(std::index_sequence<axis...>) {
-      return (... | (std::hash<T>{}(v.template get<axis>()) << (slot_width * axis)));
-    }(axes{});
+  template <std::size_t... axes>
+  constexpr auto hash_impl(const vec& v, std::index_sequence<axes...>) const noexcept {
+    return (... | (std::hash<T>{}(v.template get<axes>()) << (slot_width * axes)));
   }
+
+public:
+  constexpr auto operator()(const vec& v) const noexcept { return hash_impl(v, axes{}); }
 };
 
 template <std::formattable<char>... Ts> struct std::formatter<ndvec<Ts...>, char> {
+private:
+  using vec = ndvec<Ts...>;
+
+public:
   template <typename ParseContext> constexpr auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
 
-  template <typename FormatContext>
-  auto format(const ndvec<Ts...>& v, FormatContext& ctx) const {
-    return std::format_to(ctx.out(), "ndvec{}{}", ndvec<Ts...>::ndim, v.elements);
+  template <typename FormatContext> auto format(const vec& v, FormatContext& ctx) const {
+    return std::format_to(ctx.out(), "ndvec{}{}", vec::ndim, v.values());
   }
 };
 
-template <typename... Ts>
-std::ostream& operator<<(std::ostream& os, const ndvec<Ts...>& v) {
-  return os << std::format("{}", v);
-}
-
 template <typename... Ts> std::istream& operator>>(std::istream& is, ndvec<Ts...>& v) {
-  using axes = ndvec<Ts...>::axes_indices;
-  if (ndvec<Ts...> parsed;
+  using vec = ndvec<Ts...>;
+  using axes = vec::axes_indices;
+  if (vec parsed;
       [&]<std::size_t... axis>(std::index_sequence<axis...>) -> std::istream& {
         return (is >> ... >> parsed.template get<axis>());
       }(axes{})) {
