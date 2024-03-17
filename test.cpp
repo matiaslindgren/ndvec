@@ -34,6 +34,7 @@ template <typename T> std::string demangle() { return typeid(T).name(); }
 
 template <typename T> void test_vec1() {
   std::println("test_vec1<{}>", demangle<T>());
+  static_assert(std::regular<vec1<T>>);
   {
     vec1<T> v;
     assert(v.x() == T{}, std::format("vec1: default init x should be {}", T{}));
@@ -96,6 +97,7 @@ template <typename T> void test_vec1() {
 
 template <typename T> void test_vec2() {
   std::println("test_vec2<{}>", demangle<T>());
+  static_assert(std::regular<vec2<T>>);
   {
     vec2<T> v;
     assert(v.x() == T{}, std::format("vec2: default init x should be {}", T{}));
@@ -176,6 +178,7 @@ template <typename T> void test_vec2() {
 
 template <typename T> void test_vec3() {
   std::println("test_vec3<{}>", demangle<T>());
+  static_assert(std::regular<vec3<T>>);
   {
     vec3<T> v;
     assert(v.x() == T{}, std::format("vec3: default init x should be {}", T{}));
@@ -305,6 +308,7 @@ template <typename T> void test_vec3() {
 
 template <typename T> void test_vec4() {
   std::println("test_vec4<{}>", demangle<T>());
+  static_assert(std::regular<vec4<T>>);
   {
     vec4<T> v;
     assert(v.x() == T{}, std::format("vec4: default init x should be {}", T{}));
@@ -364,6 +368,35 @@ template <typename T> void test_hash() {
   std::println("test_hash<{}>", demangle<T>());
   auto hash{std::hash<T>{}};
   auto width{std::numeric_limits<std::size_t>::digits};
+  {
+    vec1<T> v;
+    assert_equal(std::hash<vec1<T>>{}(v), hash(0), "vec1() hash");
+  }
+  {
+    vec2<T> v;
+    assert_equal(
+        std::hash<vec2<T>>{}(v),
+        hash(0) | (hash(0) << (width / 2)),
+        "vec2() hash"
+    );
+  }
+  {
+    vec3<T> v;
+    assert_equal(
+        std::hash<vec3<T>>{}(v),
+        hash(0) | (hash(0) << (width / 3)) | (hash(0) << (2 * (width / 3))),
+        "vec3() hash"
+    );
+  }
+  {
+    vec4<T> v;
+    assert_equal(
+        std::hash<vec4<T>>{}(v),
+        hash(0) | (hash(0) << (width / 4)) | (hash(0) << (2 * (width / 4)))
+            | (hash(0) << (2 * (width / 4))),
+        "vec4() hash"
+    );
+  }
   {
     vec1<T> v(0xabc);
     assert_equal(std::hash<vec1<T>>{}(v), hash(0xabc), "vec1(0xabc) hash");
