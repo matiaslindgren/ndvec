@@ -1,6 +1,6 @@
 # `ndvec`: constexpr Euclidean vector
 
-[godbolt](https://godbolt.org/z/oh3rvv5Tc)
+[godbolt](https://godbolt.org/z/q6P4dE1Tr)
 
 ## Description
 
@@ -23,7 +23,7 @@ The program exits with 48
 ./main || echo $?
 # output: 48
 ```
-Disassembling the output of Clang 18
+Disassembling the output
 ```sh
 objdump --disassemble main | grep --context 5 '<main>'
 ```
