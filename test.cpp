@@ -53,19 +53,19 @@ template <typename T> void test_vec1() {
   }
   {
     vec1<T> lhs, rhs;
-    assert((lhs <=> rhs) == 0, "vec1() <=> vec1() should compare equal");
+    assert((lhs <=> rhs) == 0, "expected vec1() == vec1()");
   }
   {
     vec1<T> lhs(1), rhs(1);
-    assert((lhs <=> rhs) == 0, "vec1(1) <=> vec1(1) should compare equal");
+    assert((lhs <=> rhs) == 0, "expected vec1(1) == vec1(1)");
   }
   {
     vec1<T> lhs(1), rhs(2);
-    assert((lhs <=> rhs) < 0, "vec1(1) <=> vec1(2) should compare less than");
+    assert((lhs <=> rhs) < 0, "expected vec1(1) < vec1(2)");
   }
   {
     vec1<T> lhs(2), rhs(1);
-    assert((lhs <=> rhs) > 0, "vec1(2) <=> vec1(1) should compare greater than");
+    assert((lhs <=> rhs) > 0, "expected vec1(2) > vec1(1)");
   }
   {
     vec1<T> lhs(6), rhs(-2);
@@ -118,27 +118,27 @@ template <typename T> void test_vec2() {
   }
   {
     vec2<T> lhs, rhs;
-    assert((lhs <=> rhs) == 0, "vec2() <=> vec2() should compare equal");
+    assert((lhs <=> rhs) == 0, "expected vec2() == vec2()");
   }
   {
     vec2<T> lhs(1, 1), rhs(1, 1);
-    assert((lhs <=> rhs) == 0, "vec2(1, 1) <=> vec2(1, 1) should compare equal");
+    assert((lhs <=> rhs) == 0, "expected vec2(1, 1) == vec2(1, 1)");
   }
   {
     vec2<T> lhs(1, 1), rhs(1, 2);
-    assert((lhs <=> rhs) < 0, "vec2(1, 1) <=> vec2(1, 2) should compare less than");
+    assert((lhs <=> rhs) < 0, "expected vec2(1, 1) < vec2(1, 2)");
   }
   {
     vec2<T> lhs(1, 1), rhs(2, 2);
-    assert((lhs <=> rhs) < 0, "vec2(1, 1) <=> vec2(2, 2) should compare less than");
+    assert((lhs <=> rhs) < 0, "expected vec2(1, 1) < vec2(2, 2)");
   }
   {
     vec2<T> lhs(1, 2), rhs(1, 1);
-    assert((lhs <=> rhs) > 0, "vec2(1, 2) <=> vec2(1, 1) should compare greater than");
+    assert((lhs <=> rhs) > 0, "expected vec2(1, 2) > vec2(1, 1)");
   }
   {
     vec2<T> lhs(2, 2), rhs(1, 1);
-    assert((lhs <=> rhs) > 0, "vec2(2, 2) <=> vec2(1, 1) should compare greater than");
+    assert((lhs <=> rhs) > 0, "expected vec2(2, 2) > vec2(1, 1)");
   }
   {
     vec2<T> lhs(6, -12), rhs(3, 2);
@@ -201,44 +201,35 @@ template <typename T> void test_vec3() {
   }
   {
     vec3<T> lhs, rhs;
-    assert((lhs <=> rhs) == 0, "vec3() <=> vec3() should compare equal");
+    assert((lhs <=> rhs) == 0, "expected vec3() == vec3()");
   }
   {
     vec3<T> lhs(1, 1, 1), rhs(1, 1, 1);
-    assert((lhs <=> rhs) == 0, "vec3(1, 1, 1) <=> vec3(1, 1, 1) should compare equal");
+    assert((lhs <=> rhs) == 0, "expected vec3(1, 1, 1) == vec3(1, 1, 1)");
   }
   {
     vec3<T> lhs(1, 1, 1), rhs(1, 1, 2);
-    assert((lhs <=> rhs) < 0, "vec3(1, 1, 1) <=> vec3(1, 1, 2) should compare less than");
+    assert((lhs <=> rhs) < 0, "expected vec3(1, 1, 1) < vec3(1, 1, 2)");
   }
   {
     vec3<T> lhs(1, 1, 1), rhs(1, 2, 2);
-    assert((lhs <=> rhs) < 0, "vec3(1, 1, 1) <=> vec3(1, 2, 2) should compare less than");
+    assert((lhs <=> rhs) < 0, "expected vec3(1, 1, 1) < vec3(1, 2, 2)");
   }
   {
     vec3<T> lhs(1, 1, 1), rhs(2, 2, 2);
-    assert((lhs <=> rhs) < 0, "vec3(1, 1, 1) <=> vec3(2, 2, 2) should compare less than");
+    assert((lhs <=> rhs) < 0, "expected vec3(1, 1, 1) < vec3(2, 2, 2)");
   }
   {
     vec3<T> lhs(1, 1, 2), rhs(1, 1, 1);
-    assert(
-        (lhs <=> rhs) > 0,
-        "vec3(1, 1, 2) <=> vec3(1, 1, 1) should compare greater than"
-    );
+    assert((lhs <=> rhs) > 0, "expected vec3(1, 1, 2) > vec3(1, 1, 1)");
   }
   {
     vec3<T> lhs(1, 2, 2), rhs(1, 1, 1);
-    assert(
-        (lhs <=> rhs) > 0,
-        "vec3(1, 2, 2) <=> vec3(1, 1, 1) should compare greater than"
-    );
+    assert((lhs <=> rhs) > 0, "expected vec3(1, 2, 2) > vec3(1, 1, 1)");
   }
   {
     vec3<T> lhs(2, 2, 2), rhs(1, 1, 1);
-    assert(
-        (lhs <=> rhs) > 0,
-        "vec3(2, 2, 2) <=> vec3(1, 1, 1) should compare greater than"
-    );
+    assert((lhs <=> rhs) > 0, "expected vec3(2, 2, 2) > vec3(1, 1, 1)");
   }
   {
     vec3<T> lhs(-2, 0, 2), rhs(1, 2, 3);
@@ -333,7 +324,7 @@ template <typename T> void test_vec4() {
   }
   {
     vec4<T> lhs, rhs;
-    assert((lhs <=> rhs) == 0, "vec4() <=> vec4() should compare equal");
+    assert((lhs <=> rhs) == 0, "expected vec4() == vec4()");
   }
   {
     vec4<T> lhs(10, 10, 10, 10), rhs(2, 2, 2, 2);
