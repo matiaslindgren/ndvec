@@ -97,19 +97,23 @@ public:
 
   [[nodiscard]] constexpr ndvec abs() const noexcept {
     ndvec res{*this};
-    return res.apply([](value_type val) noexcept -> value_type { return std::abs(val); });
+    return res.apply([](value_type val) constexpr noexcept -> value_type {
+      // TODO
+      // clang does not implement constexpr std::abs as of 2024-03-20
+      return val < 0 ? 0 - val : val;
+    });
   }
 
   [[nodiscard]] constexpr ndvec signum() const noexcept {
     ndvec res{*this};
-    return res.apply([](value_type val) noexcept -> value_type {
+    return res.apply([](value_type val) constexpr noexcept -> value_type {
       return (value_type{} < val) - (val < value_type{});
     });
   }
 
   [[nodiscard]] constexpr value_type sum() const noexcept {
     return std::apply(
-        [](std::same_as<value_type> auto... vs) noexcept -> value_type {
+        [](std::same_as<value_type> auto... vs) constexpr noexcept -> value_type {
           return (... + vs);
         },
         data
