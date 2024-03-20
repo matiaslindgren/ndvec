@@ -1,6 +1,6 @@
 # `ndvec`: constexpr Euclidean vector
 
-[godbolt](https://godbolt.org/z/q6P4dE1Tr)
+[godbolt](https://godbolt.org/z/sP1ohrzo6)
 
 ## Description
 
@@ -11,7 +11,8 @@ Consider this code from main.cpp:
 int main() {
   ndvec v1(1, -2, 3);
   ndvec v2(-3, 2, -1);
-  return (v1 - v2).sum() * v1.distance(v2);
+  ndvec v3(5, 6, 3);
+  return (v1 - v2).sum() * v1.distance(v3);
 }
 ```
 Compiling with Clang 18
