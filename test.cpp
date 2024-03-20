@@ -427,10 +427,116 @@ template <typename... Ts> void test_vec() {
   (test_vec4<Ts>(), ...);
 }
 
+template <typename T> consteval void test_vec_compile_time_impl() {
+  static_assert(std::regular<vec4<T>>);
+  {
+    constexpr vec4<T> v;
+    static_assert(v.x() == T{}, "vec4: default init x should be T{}");
+    static_assert(v.y() == T{}, "vec4: default init y should be T{}");
+    static_assert(v.z() == T{}, "vec4: default init z should be T{}");
+    static_assert(v.w() == T{}, "vec4: default init w should be T{}");
+  }
+  {
+    constexpr vec4<T> v(1, 2, 3, 4);
+    static_assert(v.x() == 1, "vec4(1, 2, 3, 4) => x should be 1");
+    static_assert(v.y() == 2, "vec4(1, 2, 3, 4) => y should be 2");
+    static_assert(v.z() == 3, "vec4(1, 2, 3, 4) => z should be 3");
+    static_assert(v.w() == 4, "vec4(1, 2, 3, 4) => w should be 4");
+  }
+  {
+    constexpr vec4<T> lhs, rhs;
+    static_assert((lhs <=> rhs) == 0, "expected vec4() == vec4()");
+  }
+  {
+    constexpr vec4<T> lhs(-1, 0, 1, 2);
+    constexpr vec4<T> rhs(-1, 0, 1, 2);
+    static_assert((lhs <=> rhs) == 0, "expected vec4(-1, 0, 1, 2) == vec4(-1, 0, 1, 2)");
+  }
+  {
+    constexpr vec4<T> lhs(-1, 0, 1, 1);
+    constexpr vec4<T> rhs(-1, 0, 1, 2);
+    static_assert((lhs <=> rhs) < 0, "expected vec4(-1, 0, 1, 1) < vec4(-1, 0, 1, 2)");
+    static_assert((rhs <=> lhs) > 0, "expected vec4(-1, 0, 1, 2) > vec4(-1, 0, 1, 1)");
+  }
+  {
+    constexpr vec4<T> lhs(-1, 0, 0, 3);
+    constexpr vec4<T> rhs(-1, 0, 1, 2);
+    static_assert((lhs <=> rhs) < 0, "expected vec4(-1, 0, 0, 3) < vec4(-1, 0, 1, 2)");
+    static_assert((rhs <=> lhs) > 0, "expected vec4(-1, 0, 1, 2) < vec4(-1, 0, 0, 3)");
+  }
+  {
+    constexpr vec4<T> lhs(-2, 0, 2, 3);
+    constexpr vec4<T> rhs(-1, 0, 1, 2);
+    static_assert((lhs <=> rhs) < 0, "expected vec4(-2, 0, 2, 3) < vec4(-1, 0, 1, 2)");
+    static_assert((rhs <=> lhs) > 0, "expected vec4(-1, 0, 1, 2) > vec4(-2, 0, 2, 3)");
+  }
+  {
+    constexpr vec4<T> lhs(1, 2, 3, 4);
+    constexpr vec4<T> rhs(12, 10, 8, 6);
+    constexpr vec4<T> res(13, 12, 11, 10);
+    static_assert((lhs + rhs) == res, "vec4(1, 2, 3, 4) + vec4(12, 10, 8, 6)");
+  }
+  {
+    constexpr vec4<T> lhs(7, 6, 5, 4);
+    constexpr vec4<T> rhs(4, 5, 6, 7);
+    constexpr vec4<T> res(3, 1, -1, -3);
+    static_assert((lhs - rhs) == res, "vec4(7, 6, 5, 4) - vec4(4, 5, 6, 7)");
+  }
+  {
+    constexpr vec4<T> lhs(1, -2, 0, 4);
+    constexpr vec4<T> rhs(8, 6, 4, 2);
+    constexpr vec4<T> res(8, -12, 0, 8);
+    static_assert((lhs * rhs) == res, "vec4(1, -2, 0, 4) * vec4(8, 6, 4, 2)");
+  }
+  {
+    constexpr vec4<T> lhs(10, 20, 0, 40);
+    constexpr vec4<T> rhs(10, -5, 3, 2);
+    constexpr vec4<T> res(1, -4, 0, 20);
+    static_assert((lhs / rhs) == res, "vec4(10, 20, 0, 40) / vec4(10, -5, 3, 2)");
+  }
+  {
+    constexpr vec4<T> v;
+    static_assert(v.distance(v) == 0, "wrong distance from center to center");
+  }
+  {
+    constexpr vec4<T> lhs(-1, 2, -4, 3);
+    constexpr vec4<T> center;
+    static_assert(
+        lhs.distance(center) == 10,
+        "wrong distance from vec4(-1, 2, -4, 3) to center"
+    );
+    static_assert(
+        lhs.distance(lhs) == 0,
+        "wrong distance from vec4(-1, 2, -4, 3) to self"
+    );
+  }
+  {
+    constexpr vec4<T> lhs(-1, 2, -4, 3);
+    constexpr vec4<T> rhs(1, 2, 4, 3);
+    static_assert(
+        lhs.distance(rhs) == 10,
+        "wrong distance from vec4(-1, 2, -4, 3) to vec4(1, 2, 4, 3)"
+    );
+  }
+  {
+    constexpr vec4<T> lhs(-1, 2, -4, 3);
+    constexpr vec4<T> res(-1, 1, -1, 1);
+    static_assert(
+        lhs.signum() == res,
+        "expected vec4(-1, 2, -4, 3).signum() == vec4(-1, 1, -1, 1)"
+    );
+  }
+}
+
+template <typename... Ts> consteval void test_vec_compile_time() {
+  (test_vec_compile_time_impl<Ts>(), ...);
+}
+
 template <typename... Ts> void test_vec_hash() { (test_hash<Ts>(), ...); }
 
 int main() {
   test_vec<short, int, long, long long, float, double, long double>();
   test_vec_hash<short, int, long, long long>();
+  test_vec_compile_time<short, int, long, long long, float, double, long double>();
   return 0;
 }
