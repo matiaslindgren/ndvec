@@ -1,3 +1,6 @@
+#ifndef NDVEC_HEADER_INCLUDED
+#define NDVEC_HEADER_INCLUDED
+
 #include <algorithm>
 #include <concepts>
 #include <format>
@@ -208,3 +211,5 @@ std::istream& operator>>(std::istream& is, ndvec::ndvec<Ts...>& v) {
   }
   return is;
 }
+
+#endif // NDVEC_HEADER_INCLUDED
