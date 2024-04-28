@@ -1,6 +1,6 @@
 # `ndvec`: constexpr Euclidean vector
 
-[godbolt](https://godbolt.org/z/sP1ohrzo6)
+[godbolt](https://godbolt.org/z/zhxMjdPh8)
 
 ## Description
 
@@ -9,35 +9,37 @@ Consider this code from main.cpp:
 #include "ndvec.hpp"
 
 int main() {
+  using ndvec::ndvec;
   ndvec v1(1, -2, 3);
   ndvec v2(-3, 2, -1);
   ndvec v3(5, 6, 3);
-  return (v1 - v2).sum() * v1.distance(v3);
+  ndvec v4(1, 2, -3, -2, 4, 10);
+  return v4.signum().sum() + (v1 - v2).sum() * v1.distance(v3);
 }
 ```
 Compiling with Clang 18
 ```
 make CXX=clang-18 main
 ```
-The program exits with 48
+The program exits with 50
 ```
 ./main || echo $?
-# output: 48
+# output: 50
 ```
 Disassembling the output
 ```sh
 objdump --disassemble main | grep --context 5 '<main>'
 ```
-We see the main function compiles to just `return 48`:
+We see the main function compiles to just `return 50`:
 ```
- 70c:	d503201f 	nop
+ 7cc:	d503201f 	nop
 
-0000000000000710 <frame_dummy>:
- 710:	17ffffdc 	b	680 <register_tm_clones>
+00000000000007d0 <frame_dummy>:
+ 7d0:	17ffffdc 	b	740 <register_tm_clones>
 
-0000000000000714 <main>:
- 714:	52800600 	mov	w0, #0x30                  	// #48
- 718:	d65f03c0 	ret
+00000000000007d4 <main>:
+ 7d4:	52800640 	mov	w0, #0x32                  	// #50
+ 7d8:	d65f03c0 	ret
 
 Disassembly of section .fini:
 ```

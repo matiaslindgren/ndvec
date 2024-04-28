@@ -32,6 +32,8 @@ template <typename T> std::string demangle() {
 template <typename T> std::string demangle() { return typeid(T).name(); }
 #endif
 
+using namespace ndvec;
+
 template <typename T> void test_vec1() {
   std::println("test_vec1<{}>", demangle<T>());
   static_assert(std::regular<vec1<T>>);

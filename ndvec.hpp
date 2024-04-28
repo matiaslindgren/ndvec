@@ -8,6 +8,8 @@
 #include <type_traits>
 #include <utility>
 
+namespace ndvec {
+
 template <typename T, std::same_as<T>... Ts>
   requires(std::regular<T> and std::is_arithmetic_v<T>)
 class ndvec {
@@ -99,8 +101,8 @@ public:
     ndvec res{*this};
     return res.apply([](value_type val) constexpr noexcept -> value_type {
       // TODO
-      // clang does not implement constexpr std::abs as of 2024-03-20
-      return val < 0 ? 0 - val : val;
+      // clang-18 does not implement constexpr std::abs as of 2024-04-28
+      return val < 0 ? -val : val;
     });
   }
 
@@ -162,9 +164,11 @@ template <typename T> using vec2 = ndvec<T, T>;
 template <typename T> using vec3 = ndvec<T, T, T>;
 template <typename T> using vec4 = ndvec<T, T, T, T>;
 
-template <std::integral... Ts> struct std::hash<ndvec<Ts...>> {
+} // namespace ndvec
+
+template <std::integral... Ts> struct std::hash<ndvec::ndvec<Ts...>> {
 private:
-  using vec = ndvec<Ts...>;
+  using vec = ndvec::ndvec<Ts...>;
   using axes = vec::axes_indices;
   using T = vec::value_type;
   static constexpr auto slot_width{std::numeric_limits<std::size_t>::digits / vec::ndim};
@@ -178,9 +182,9 @@ public:
   constexpr auto operator()(const vec& v) const noexcept { return hash_impl(v, axes{}); }
 };
 
-template <std::formattable<char>... Ts> struct std::formatter<ndvec<Ts...>, char> {
+template <std::formattable<char>... Ts> struct std::formatter<ndvec::ndvec<Ts...>, char> {
 private:
-  using vec = ndvec<Ts...>;
+  using vec = ndvec::ndvec<Ts...>;
 
 public:
   template <typename ParseContext> constexpr auto parse(ParseContext& ctx) {
@@ -192,8 +196,9 @@ public:
   }
 };
 
-template <typename... Ts> std::istream& operator>>(std::istream& is, ndvec<Ts...>& v) {
-  using vec = ndvec<Ts...>;
+template <typename... Ts>
+std::istream& operator>>(std::istream& is, ndvec::ndvec<Ts...>& v) {
+  using vec = ndvec::ndvec<Ts...>;
   using axes = vec::axes_indices;
   if (vec parsed;
       [&]<std::size_t... axis>(std::index_sequence<axis...>) -> std::istream& {
