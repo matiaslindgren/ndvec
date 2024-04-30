@@ -90,6 +90,14 @@ template <typename T> void test_vec1() {
     assert_equal(lhs, vec1<T>(3), "vec1(-6) / vec1(-2)");
   }
   {
+    vec1<T> lhs(6), rhs(-2);
+    assert_equal(lhs.min(rhs), vec1<T>(-2), "min(vec1(6), vec1(-2))");
+  }
+  {
+    vec1<T> lhs(6), rhs(-2);
+    assert_equal(lhs.max(rhs), vec1<T>(6), "max(vec1(6), vec1(-2))");
+  }
+  {
     std::istringstream is{"1"s};
     vec1<T> v;
     is >> v;
@@ -161,6 +169,14 @@ template <typename T> void test_vec2() {
     vec2<T> lhs(6, 12), rhs(3, 2);
     lhs /= rhs;
     assert_equal(lhs, vec2<T>(2, 6), "vec2(6, 12) / vec2(3, 2)");
+  }
+  {
+    vec2<T> lhs(6, 12), rhs(3, 2);
+    assert_equal(lhs.min(rhs), vec2<T>(3, 2), "vec2(6, 12).min(vec2(3, 2))");
+  }
+  {
+    vec2<T> lhs(6, 12), rhs(3, 2);
+    assert_equal(lhs.max(rhs), vec2<T>(6, 12), "vec2(6, 12).max(vec2(3, 2))");
   }
   {
     auto input{"1 2"s};
@@ -252,6 +268,14 @@ template <typename T> void test_vec3() {
     vec3<T> lhs(-2, 0, 6), rhs(1, 2, 3);
     lhs /= rhs;
     assert_equal(lhs, vec3<T>(-2, 0, 2), "vec3(-2, 0, 2) / vec3(1, 2, 3)");
+  }
+  {
+    vec3<T> lhs(-2, 0, 6), rhs(1, 2, 3);
+    assert_equal(lhs.min(rhs), vec3<T>(-2, 0, 3), "vec3(-2, 0, 2).min(vec3(1, 2, 3))");
+  }
+  {
+    vec3<T> lhs(-2, 0, 6), rhs(1, 2, 3);
+    assert_equal(lhs.max(rhs), vec3<T>(1, 2, 6), "vec3(-2, 0, 2).max(vec3(1, 2, 3))");
   }
   {
     auto input{"1 2 3"s};
@@ -347,6 +371,22 @@ template <typename T> void test_vec4() {
     vec4<T> lhs(10, 10, 10, 10), rhs(2, 2, 2, 2);
     lhs /= rhs;
     assert_equal(lhs, vec4<T>(5, 5, 5, 5), "vec4(10, 10, 10, 10) / vec4(2, 2, 2, 2)");
+  }
+  {
+    vec4<T> lhs(10, 8, 6, 4), rhs(2, 4, 6, 8);
+    assert_equal(
+        lhs.min(rhs),
+        vec4<T>(2, 4, 6, 4),
+        "vec4(10, 8, 6, 4).min(vec4(2, 4, 6, 8))"
+    );
+  }
+  {
+    vec4<T> lhs(10, 8, 6, 4), rhs(2, 4, 6, 8);
+    assert_equal(
+        lhs.max(rhs),
+        vec4<T>(10, 8, 6, 8),
+        "vec4(10, 8, 6, 4).max(vec4(2, 4, 6, 8))"
+    );
   }
   {
     auto input{"   1   -2    3   -1000"s};
@@ -495,6 +535,18 @@ template <typename T> consteval void test_vec_compile_time_impl() {
     constexpr vec4<T> rhs(10, -5, 3, 2);
     constexpr vec4<T> res(1, -4, 0, 20);
     static_assert((lhs / rhs) == res, "vec4(10, 20, 0, 40) / vec4(10, -5, 3, 2)");
+  }
+  {
+    constexpr vec4<T> lhs(10, 20, 0, 40);
+    constexpr vec4<T> rhs(10, -5, 3, 2);
+    constexpr vec4<T> res(10, -5, 0, 2);
+    static_assert(lhs.min(rhs) == res, "vec4(10, 20, 0, 40).min(vec4(10, -5, 3, 2))");
+  }
+  {
+    constexpr vec4<T> lhs(10, 20, 0, 40);
+    constexpr vec4<T> rhs(10, -5, 3, 2);
+    constexpr vec4<T> res(10, 20, 3, 40);
+    static_assert(lhs.max(rhs) == res, "vec4(10, 20, 0, 40).max(vec4(10, -5, 3, 2))");
   }
   {
     constexpr vec4<T> v;

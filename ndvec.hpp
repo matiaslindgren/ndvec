@@ -99,6 +99,24 @@ public:
     ndvec lhs{*this};
     return lhs /= rhs;
   }
+  [[nodiscard]] constexpr ndvec min(const ndvec& rhs) const noexcept {
+    ndvec lhs{*this};
+    return lhs.apply(
+        [](value_type a, value_type b) constexpr noexcept -> value_type {
+          return a < b ? a : b;
+        },
+        rhs
+    );
+  }
+  [[nodiscard]] constexpr ndvec max(const ndvec& rhs) const noexcept {
+    ndvec lhs{*this};
+    return lhs.apply(
+        [](value_type a, value_type b) constexpr noexcept -> value_type {
+          return a < b ? b : a;
+        },
+        rhs
+    );
+  }
 
   [[nodiscard]] constexpr ndvec abs() const noexcept {
     ndvec res{*this};
