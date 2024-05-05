@@ -98,6 +98,15 @@ template <typename T> void test_vec1() {
     assert_equal(lhs.max(rhs), vec1<T>(6), "max(vec1(6), vec1(-2))");
   }
   {
+    vec1<T> lhs(6), rhs(-2);
+    lhs.swap(rhs);
+    assert_equal(lhs, vec1<T>(-2), "vec1(6).swap(vec1(-2)) once");
+    assert_equal(rhs, vec1<T>(6), "vec1(6).swap(vec1(-2)) once");
+    lhs.swap(rhs);
+    assert_equal(lhs, vec1<T>(6), "vec1(6).swap(vec1(-2)) twice");
+    assert_equal(rhs, vec1<T>(-2), "vec1(6).swap(vec1(-2)) twice");
+  }
+  {
     std::istringstream is{"1"s};
     vec1<T> v;
     is >> v;
@@ -177,6 +186,15 @@ template <typename T> void test_vec2() {
   {
     vec2<T> lhs(6, 12), rhs(3, 2);
     assert_equal(lhs.max(rhs), vec2<T>(6, 12), "vec2(6, 12).max(vec2(3, 2))");
+  }
+  {
+    vec2<T> lhs(6, 12), rhs(3, 2);
+    lhs.swap(rhs);
+    assert_equal(lhs, vec2<T>(3, 2), "vec2(6, 12).swap(vec2(3, 2)) once");
+    assert_equal(rhs, vec2<T>(6, 12), "vec2(6, 12).swap(vec2(3, 2)) once");
+    lhs.swap(rhs);
+    assert_equal(lhs, vec2<T>(6, 12), "vec2(6, 12).swap(vec2(3, 2)) twice");
+    assert_equal(rhs, vec2<T>(3, 2), "vec2(6, 12).swap(vec2(3, 2)) twice");
   }
   {
     auto input{"1 2"s};
@@ -276,6 +294,15 @@ template <typename T> void test_vec3() {
   {
     vec3<T> lhs(-2, 0, 6), rhs(1, 2, 3);
     assert_equal(lhs.max(rhs), vec3<T>(1, 2, 6), "vec3(-2, 0, 2).max(vec3(1, 2, 3))");
+  }
+  {
+    vec3<T> lhs(-2, 0, 6), rhs(1, 2, 3);
+    lhs.swap(rhs);
+    assert_equal(lhs, vec3<T>(1, 2, 3), "vec3(-2, 0, 2).swap(vec3(1, 2, 3)) once");
+    assert_equal(rhs, vec3<T>(-2, 0, 6), "vec3(-2, 0, 2).swap(vec3(1, 2, 3)) once");
+    lhs.swap(rhs);
+    assert_equal(lhs, vec3<T>(-2, 0, 6), "vec3(-2, 0, 2).swap(vec3(1, 2, 3)) twice");
+    assert_equal(rhs, vec3<T>(1, 2, 3), "vec3(-2, 0, 2).swap(vec3(1, 2, 3)) twice");
   }
   {
     auto input{"1 2 3"s};
@@ -386,6 +413,31 @@ template <typename T> void test_vec4() {
         lhs.max(rhs),
         vec4<T>(10, 8, 6, 8),
         "vec4(10, 8, 6, 4).max(vec4(2, 4, 6, 8))"
+    );
+  }
+  {
+    vec4<T> lhs(10, 8, 6, 4), rhs(2, 4, 6, 8);
+    lhs.swap(rhs);
+    assert_equal(
+        lhs,
+        vec4<T>(2, 4, 6, 8),
+        "vec4(10, 8, 6, 4).swap(vec4(2, 4, 6, 8)) once"
+    );
+    assert_equal(
+        rhs,
+        vec4<T>(10, 8, 6, 4),
+        "vec4(10, 8, 6, 4).swap(vec4(2, 4, 6, 8)) once"
+    );
+    lhs.swap(rhs);
+    assert_equal(
+        lhs,
+        vec4<T>(10, 8, 6, 4),
+        "vec4(10, 8, 6, 4).swap(vec4(2, 4, 6, 8)) twice"
+    );
+    assert_equal(
+        rhs,
+        vec4<T>(2, 4, 6, 8),
+        "vec4(10, 8, 6, 4).swap(vec4(2, 4, 6, 8)) twice"
     );
   }
   {

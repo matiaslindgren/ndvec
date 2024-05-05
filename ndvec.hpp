@@ -149,6 +149,8 @@ public:
     return (*this - rhs).abs().sum();
   }
 
+  constexpr void swap(ndvec& other) noexcept { data.swap(other.data); }
+
   constexpr auto&& x(this auto&& self) noexcept { return self.template get<0>(); }
   constexpr auto&& y(this auto&& self) noexcept { return self.template get<1>(); }
   constexpr auto&& z(this auto&& self) noexcept { return self.template get<2>(); }
