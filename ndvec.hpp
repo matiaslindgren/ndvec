@@ -143,6 +143,33 @@ public:
     );
   }
 
+  [[nodiscard]] constexpr value_type prod() const noexcept {
+    return std::apply(
+        [](std::same_as<value_type> auto... vs) constexpr noexcept -> value_type {
+          return (... * vs);
+        },
+        data
+    );
+  }
+
+  [[nodiscard]] constexpr value_type min() const noexcept {
+    return std::apply(
+        [](std::same_as<value_type> auto... vs) constexpr noexcept -> value_type {
+          return std::min(std::initializer_list<value_type>{vs...});
+        },
+        data
+    );
+  }
+
+  [[nodiscard]] constexpr value_type max() const noexcept {
+    return std::apply(
+        [](std::same_as<value_type> auto... vs) constexpr noexcept -> value_type {
+          return std::max(std::initializer_list<value_type>{vs...});
+        },
+        data
+    );
+  }
+
   [[nodiscard]] constexpr auto operator<=>(const ndvec&) const noexcept = default;
 
   [[nodiscard]] constexpr value_type distance(const ndvec& rhs) const noexcept {

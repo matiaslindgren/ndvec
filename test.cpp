@@ -98,6 +98,14 @@ template <typename T> void test_vec1() {
     assert_equal(lhs.max(rhs), vec1<T>(6), "max(vec1(6), vec1(-2))");
   }
   {
+    vec1<T> v(6);
+    assert_equal(v.max(), 6, "vec1(6).max()");
+  }
+  {
+    vec1<T> v(6);
+    assert_equal(v.min(), 6, "vec1(6).min()");
+  }
+  {
     vec1<T> lhs(6), rhs(-2);
     lhs.swap(rhs);
     assert_equal(lhs, vec1<T>(-2), "vec1(6).swap(vec1(-2)) once");
@@ -331,8 +339,24 @@ template <typename T> void test_vec3() {
     assert_equal(v.sum(), 0, "vec3().sum()");
   }
   {
+    vec3<T> v;
+    assert_equal(v.prod(), 0, "vec3().prod()");
+  }
+  {
     vec3<T> v(-1, 2, -3);
     assert_equal(v.sum(), -2, "vec3(-1, 2, -3).sum()");
+  }
+  {
+    vec3<T> v(-1, 2, -3);
+    assert_equal(v.prod(), 6, "vec3(-1, 2, -3).prod()");
+  }
+  {
+    vec3<T> v(-1, 2, -3);
+    assert_equal(v.max(), 2, "vec3(-1, 2, -3).max()");
+  }
+  {
+    vec3<T> v(-1, 2, -3);
+    assert_equal(v.min(), -3, "vec3(-1, 2, -3).min()");
   }
   {
     vec3<T> v;
@@ -631,6 +655,22 @@ template <typename T> consteval void test_vec_compile_time_impl() {
         lhs.signum() == res,
         "expected vec4(-1, 2, -4, 3).signum() == vec4(-1, 1, -1, 1)"
     );
+  }
+  {
+    constexpr vec4<T> v(-1, 2, -4, 3);
+    static_assert(v.sum() == 0, "expected vec4(-1, 2, -4, 3).sum() == 0");
+  }
+  {
+    constexpr vec4<T> v(-1, 2, -4, 3);
+    static_assert(v.prod() == 24, "expected vec4(-1, 2, -4, 3).prod() == 24");
+  }
+  {
+    constexpr vec4<T> v(-1, 2, -4, 3);
+    static_assert(v.min() == -4, "expected vec4(-1, 2, -4, 3).min() == -4");
+  }
+  {
+    constexpr vec4<T> v(-1, 2, -4, 3);
+    static_assert(v.max() == 3, "expected vec4(-1, 2, -4, 3).max() == 3");
   }
 }
 
