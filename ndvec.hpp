@@ -103,7 +103,7 @@ public:
     ndvec lhs{*this};
     return lhs.apply(
         [](value_type a, value_type b) constexpr noexcept -> value_type {
-          return a < b ? a : b;
+          return std::min(a, b);
         },
         rhs
     );
@@ -112,7 +112,7 @@ public:
     ndvec lhs{*this};
     return lhs.apply(
         [](value_type a, value_type b) constexpr noexcept -> value_type {
-          return a < b ? b : a;
+          return std::max(a, b);
         },
         rhs
     );
