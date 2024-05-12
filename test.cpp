@@ -118,7 +118,7 @@ template <typename T> void test_vec1() {
     std::istringstream is{"1"s};
     vec1<T> v;
     is >> v;
-    assert_equal(v, vec1<T>(1), "parse string 1");
+    assert_equal(v, vec1<T>(1), "stream extract 1");
   }
 }
 
@@ -209,14 +209,14 @@ template <typename T> void test_vec2() {
     std::istringstream is{input};
     vec2<T> v;
     is >> v;
-    assert_equal(v, vec2<T>(1, 2), std::format("parse string '{}'", input));
+    assert_equal(v, vec2<T>(1, 2), std::format("stream extract '{}'", input));
   }
   {
     auto input{"1    2"s};
     std::istringstream is{input};
     vec2<T> v;
     is >> v;
-    assert_equal(v, vec2<T>(1, 2), std::format("parse string '{}'", input));
+    assert_equal(v, vec2<T>(1, 2), std::format("stream extract '{}'", input));
   }
 }
 
@@ -317,14 +317,14 @@ template <typename T> void test_vec3() {
     std::istringstream is{input};
     vec3<T> v;
     is >> v;
-    assert_equal(v, vec3<T>(1, 2, 3), std::format("parse string '{}'", input));
+    assert_equal(v, vec3<T>(1, 2, 3), std::format("stream extract '{}'", input));
   }
   {
     auto input{"   1   -2    3"s};
     std::istringstream is{input};
     vec3<T> v;
     is >> v;
-    assert_equal(v, vec3<T>(1, -2, 3), std::format("parse string '{}'", input));
+    assert_equal(v, vec3<T>(1, -2, 3), std::format("stream extract '{}'", input));
   }
   {
     vec3<T> v(-1, 2, -3);
@@ -469,7 +469,18 @@ template <typename T> void test_vec4() {
     std::istringstream is{input};
     vec4<T> v;
     is >> v;
-    assert_equal(v, vec4<T>(1, -2, 3, -1000), std::format("parse string '{}'", input));
+    assert_equal(v, vec4<T>(1, -2, 3, -1000), std::format("stream extract '{}'", input));
+  }
+  {
+    std::ostringstream os;
+    vec4<T> v(1, -2, 3, -4);
+    os << v;
+    assert_equal(os.str(), "ndvec4(1, -2, 3, -4)", "stream put vec4");
+  }
+  {
+    vec4<T> v(1, -2, 3, -4);
+    std::string s{std::format("{}", v)};
+    assert_equal(s, "ndvec4(1, -2, 3, -4)", "format vec4");
   }
 }
 

@@ -259,4 +259,9 @@ std::istream& operator>>(std::istream& is, ndvec::ndvec<Ts...>& v) {
   return is;
 }
 
+template <typename... Ts>
+std::ostream& operator<<(std::ostream& os, const ndvec::ndvec<Ts...>& v) {
+  return os << std::format("{}", v);
+}
+
 #endif // NDVEC_HEADER_INCLUDED
