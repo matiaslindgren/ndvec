@@ -207,6 +207,19 @@ public:
         *this + ndvec(0, 1),
     };
   }
+
+  [[nodiscard]] constexpr auto adjacent() const noexcept
+    requires(ndim == 3)
+  {
+    return std::array{
+        *this - ndvec(1, 0, 0),
+        *this - ndvec(0, 1, 0),
+        *this - ndvec(0, 0, 1),
+        *this + ndvec(0, 0, 1),
+        *this + ndvec(0, 1, 0),
+        *this + ndvec(1, 0, 0),
+    };
+  }
 };
 
 template <typename T> using vec1 = ndvec<T>;
