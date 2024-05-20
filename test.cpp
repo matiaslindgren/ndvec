@@ -1,9 +1,10 @@
-#include "ndvec.hpp"
 #include <format>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <typeinfo>
+
+#include "ndvec.hpp"
 
 using std::operator""s;
 
@@ -43,7 +44,7 @@ template <typename T> void test_vec1() {
   }
   {
     vec1<T> v(1);
-    assert(v.x() == 1, "vec1(1) => x should be 1");
+    assert(v.x() == 1, "vec1(1).x() should be 1");
   }
   {
     vec1<T> v(1);
@@ -132,8 +133,8 @@ template <typename T> void test_vec2() {
   }
   {
     vec2<T> v(1, 2);
-    assert(v.x() == 1, "vec2(1, 2) => x should be 1");
-    assert(v.y() == 2, "vec2(1, 2) => y should be 2");
+    assert(v.x() == 1, "vec2(1, 2).x() should be 1");
+    assert(v.y() == 2, "vec2(1, 2).y() should be 2");
   }
   {
     vec2<T> v(1, 2);
@@ -231,9 +232,9 @@ template <typename T> void test_vec3() {
   }
   {
     vec3<T> v(1, 2, 3);
-    assert(v.x() == 1, "vec3(1, 2, 3) => x should be 1");
-    assert(v.y() == 2, "vec3(1, 2, 3) => y should be 2");
-    assert(v.z() == 3, "vec3(1, 2, 3) => z should be 3");
+    assert(v.x() == 1, "vec3(1, 2, 3).x() should be 1");
+    assert(v.y() == 2, "vec3(1, 2, 3).y() should be 2");
+    assert(v.z() == 3, "vec3(1, 2, 3).z() should be 3");
   }
   {
     vec3<T> v(1, 2, 3);
@@ -386,10 +387,10 @@ template <typename T> void test_vec4() {
   }
   {
     vec4<T> v(1, 2, 3, 4);
-    assert(v.x() == 1, "vec4(1, 2, 3, 4) => x should be 1");
-    assert(v.y() == 2, "vec4(1, 2, 3, 4) => y should be 2");
-    assert(v.z() == 3, "vec4(1, 2, 3, 4) => z should be 3");
-    assert(v.w() == 4, "vec4(1, 2, 3, 4) => w should be 4");
+    assert(v.x() == 1, "vec4(1, 2, 3, 4).x() should be 1");
+    assert(v.y() == 2, "vec4(1, 2, 3, 4).y() should be 2");
+    assert(v.z() == 3, "vec4(1, 2, 3, 4).z() should be 3");
+    assert(v.w() == 4, "vec4(1, 2, 3, 4).w() should be 4");
   }
   {
     vec4<T> v(1, 2, 3, 4);
@@ -567,10 +568,10 @@ template <typename T> consteval void test_vec_compile_time_impl() {
   }
   {
     constexpr vec4<T> v(1, 2, 3, 4);
-    static_assert(v.x() == 1, "vec4(1, 2, 3, 4) => x should be 1");
-    static_assert(v.y() == 2, "vec4(1, 2, 3, 4) => y should be 2");
-    static_assert(v.z() == 3, "vec4(1, 2, 3, 4) => z should be 3");
-    static_assert(v.w() == 4, "vec4(1, 2, 3, 4) => w should be 4");
+    static_assert(v.x() == 1, "vec4(1, 2, 3, 4).x() should be 1");
+    static_assert(v.y() == 2, "vec4(1, 2, 3, 4).y() should be 2");
+    static_assert(v.z() == 3, "vec4(1, 2, 3, 4).z() should be 3");
+    static_assert(v.w() == 4, "vec4(1, 2, 3, 4).w() should be 4");
   }
   {
     constexpr vec4<T> lhs, rhs;
