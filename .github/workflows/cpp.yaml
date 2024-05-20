@@ -33,4 +33,4 @@ jobs:
     - name: test
       run: make CXX=clang-18 test && ./test
     - name: main
-      run: make CXX=clang-18 main && ./main || [ "$?" -eq 50 ] || echo "expected main to exit with 50" && exit 1
+      run: make CXX=clang-18 main && ./main || [ "$?" -eq 50 ]
