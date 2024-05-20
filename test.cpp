@@ -373,6 +373,20 @@ template <typename T> void test_vec3() {
     vec3<T> rhs(1, 2, 3);
     assert_equal(lhs.distance(rhs), 8, "vec3(-1, 2, -3) distance to vec3(1, 2, 3)");
   }
+  {
+    vec3<T> lhs(-1, 2, -3);
+    vec3<T> rhs(1, 2, 3);
+    assert_equal(lhs.dot(rhs), -6, "vec3(-1, 2, -3).dot(vec3(1, 2, 3))");
+  }
+  {
+    vec3<T> lhs(-1, 2, -3);
+    vec3<T> rhs(1, 2, 3);
+    assert_equal(
+        lhs.cross(rhs),
+        vec3<T>(12, 0, -4),
+        "vec3(-1, 2, -3).cross(vec3(1, 2, 3))"
+    );
+  }
 }
 
 template <typename T> void test_vec4() {
@@ -439,6 +453,11 @@ template <typename T> void test_vec4() {
         vec4<T>(10, 8, 6, 8),
         "vec4(10, 8, 6, 4).max(vec4(2, 4, 6, 8))"
     );
+  }
+  {
+    vec4<T> lhs(-1, 2, -4, 3);
+    vec4<T> rhs(1, 2, 4, 3);
+    assert_equal(lhs.dot(rhs), -4, "vec4(-1, 2, -4, 3).dot(vec4(1, 2, 4, 3))");
   }
   {
     vec4<T> lhs(10, 8, 6, 4), rhs(2, 4, 6, 8);
@@ -557,7 +576,136 @@ template <typename... Ts> void test_vec() {
   (test_vec4<Ts>(), ...);
 }
 
-template <typename T> consteval void test_vec_compile_time_impl() {
+template <typename T> consteval void test_vec3_compile_time_impl() {
+  static_assert(std::regular<vec3<T>>);
+  {
+    constexpr vec3<T> v;
+    static_assert(v.x() == T{}, "vec3: default init x should be T{}");
+    static_assert(v.y() == T{}, "vec3: default init y should be T{}");
+    static_assert(v.z() == T{}, "vec3: default init z should be T{}");
+  }
+  {
+    constexpr vec3<T> v(1, 2, 3);
+    static_assert(v.x() == 1, "vec3(1, 2, 3).x() should be 1");
+    static_assert(v.y() == 2, "vec3(1, 2, 3).y() should be 2");
+    static_assert(v.z() == 3, "vec3(1, 2, 3).z() should be 3");
+  }
+  {
+    constexpr vec3<T> lhs, rhs;
+    static_assert((lhs <=> rhs) == 0, "expected vec3() == vec3()");
+  }
+  {
+    constexpr vec3<T> lhs(-1, 0, 1);
+    constexpr vec3<T> rhs(-1, 0, 1);
+    static_assert((lhs <=> rhs) == 0, "expected vec3(-1, 0, 1) == vec3(-1, 0, 1)");
+  }
+  {
+    constexpr vec3<T> lhs(-1, 0, 0);
+    constexpr vec3<T> rhs(-1, 0, 1);
+    static_assert((lhs <=> rhs) < 0, "expected vec3(-1, 0, 0) < vec3(-1, 0, 1)");
+    static_assert((rhs <=> lhs) > 0, "expected vec3(-1, 0, 1) < vec3(-1, 0, 0)");
+  }
+  {
+    constexpr vec3<T> lhs(-2, 0, 2);
+    constexpr vec3<T> rhs(-1, 0, 1);
+    static_assert((lhs <=> rhs) < 0, "expected vec3(-2, 0, 2) < vec3(-1, 0, 1)");
+    static_assert((rhs <=> lhs) > 0, "expected vec3(-1, 0, 1) > vec3(-2, 0, 2)");
+  }
+  {
+    constexpr vec3<T> lhs(1, 2, 3);
+    constexpr vec3<T> rhs(12, 10, 8);
+    constexpr vec3<T> res(13, 12, 11);
+    static_assert((lhs + rhs) == res, "vec3(1, 2, 3) + vec3(12, 10, 8)");
+  }
+  {
+    constexpr vec3<T> lhs(7, 6, 5);
+    constexpr vec3<T> rhs(4, 5, 6);
+    constexpr vec3<T> res(3, 1, -1);
+    static_assert((lhs - rhs) == res, "vec3(7, 6, 5) - vec3(4, 5, 6)");
+  }
+  {
+    constexpr vec3<T> lhs(1, -2, 0);
+    constexpr vec3<T> rhs(8, 6, 4);
+    constexpr vec3<T> res(8, -12, 0);
+    static_assert((lhs * rhs) == res, "vec3(1, -2, 0) * vec3(8, 6, 4)");
+  }
+  {
+    constexpr vec3<T> lhs(10, 20, 0);
+    constexpr vec3<T> rhs(10, -5, 3);
+    constexpr vec3<T> res(1, -4, 0);
+    static_assert((lhs / rhs) == res, "vec3(10, 20, 0) / vec3(10, -5, 3)");
+  }
+  {
+    constexpr vec3<T> lhs(10, 20, 0);
+    constexpr vec3<T> rhs(10, -5, 3);
+    constexpr vec3<T> res(10, -5, 0);
+    static_assert(lhs.min(rhs) == res, "vec3(10, 20, 0).min(vec3(10, -5, 3))");
+  }
+  {
+    constexpr vec3<T> lhs(10, 20, 0);
+    constexpr vec3<T> rhs(10, -5, 3);
+    constexpr vec3<T> res(10, 20, 3);
+    static_assert(lhs.max(rhs) == res, "vec3(10, 20, 0).max(vec3(10, -5, 3))");
+  }
+  {
+    constexpr vec3<T> v;
+    static_assert(v.distance(v) == 0, "wrong distance from center to center");
+  }
+  {
+    constexpr vec3<T> lhs(-1, 2, -4);
+    constexpr vec3<T> center;
+    static_assert(
+        lhs.distance(center) == 7,
+        "wrong distance from vec3(-1, 2, -4) to center"
+    );
+    static_assert(lhs.distance(lhs) == 0, "wrong distance from vec3(-1, 2, -4) to self");
+  }
+  {
+    constexpr vec3<T> lhs(-1, 2, -4);
+    constexpr vec3<T> rhs(1, 2, 4);
+    static_assert(
+        lhs.distance(rhs) == 10,
+        "wrong distance from vec3(-1, 2, -4) to vec3(1, 2, 4)"
+    );
+  }
+  {
+    constexpr vec3<T> lhs(-1, 2, -4);
+    constexpr vec3<T> rhs(1, 2, 4);
+    static_assert(lhs.dot(rhs) == -13, "vec3(-1, 2, -4) dot vec3(1, 2, 4) should be -13");
+  }
+  {
+    constexpr vec3<T> lhs(-1, 2, -4);
+    constexpr vec3<T> rhs(1, 2, 4);
+    constexpr vec3<T> res(16, 0, -4);
+    static_assert(lhs.cross(rhs) == res, "vec3(-1, 2, -4).cross(vec3(1, 2, 4))");
+  }
+  {
+    constexpr vec3<T> lhs(-1, 2, -4);
+    constexpr vec3<T> res(-1, 1, -1);
+    static_assert(
+        lhs.signum() == res,
+        "expected vec3(-1, 2, -4).signum() == vec3(-1, 1, -1)"
+    );
+  }
+  {
+    constexpr vec3<T> v(-1, 2, -4);
+    static_assert(v.sum() == -3, "expected vec3(-1, 2, -4).sum() == -3");
+  }
+  {
+    constexpr vec3<T> v(-1, 2, -4);
+    static_assert(v.prod() == 8, "expected vec3(-1, 2, -4).prod() == 8");
+  }
+  {
+    constexpr vec3<T> v(-1, 2, -4);
+    static_assert(v.min() == -4, "expected vec3(-1, 2, -4).min() == -4");
+  }
+  {
+    constexpr vec3<T> v(-1, 2, -4);
+    static_assert(v.max() == 2, "expected vec3(-1, 2, -4).max() == 2");
+  }
+}
+
+template <typename T> consteval void test_vec4_compile_time_impl() {
   static_assert(std::regular<vec4<T>>);
   {
     constexpr vec4<T> v;
@@ -662,6 +810,14 @@ template <typename T> consteval void test_vec_compile_time_impl() {
   }
   {
     constexpr vec4<T> lhs(-1, 2, -4, 3);
+    constexpr vec4<T> rhs(1, 2, 4, 3);
+    static_assert(
+        lhs.dot(rhs) == -4,
+        "vec4(-1, 2, -4, 3) dot vec4(1, 2, 4, 3) should be -4"
+    );
+  }
+  {
+    constexpr vec4<T> lhs(-1, 2, -4, 3);
     constexpr vec4<T> res(-1, 1, -1, 1);
     static_assert(
         lhs.signum() == res,
@@ -687,7 +843,8 @@ template <typename T> consteval void test_vec_compile_time_impl() {
 }
 
 template <typename... Ts> consteval void test_vec_compile_time() {
-  (test_vec_compile_time_impl<Ts>(), ...);
+  (test_vec3_compile_time_impl<Ts>(), ...);
+  (test_vec4_compile_time_impl<Ts>(), ...);
 }
 
 template <typename... Ts> void test_vec_hash() { (test_hash<Ts>(), ...); }
