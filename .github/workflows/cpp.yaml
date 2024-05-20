@@ -1,0 +1,36 @@
+name: build and test
+
+on:
+  push:
+    branches: main
+    paths:
+      - 'Makefile'
+      - '*.hpp'
+      - '*.cpp'
+      - '.github/workflows/cpp.yaml'
+
+jobs:
+  build-and-test:
+    timeout-minutes: 15
+    runs-on: ubuntu-22.04
+    steps:
+    - name: trust LLVM apt repositories
+      run: wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+    - name: add LLVM apt repositories
+      run: |
+        sudo add-apt-repository --yes "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-18 main"
+        sudo add-apt-repository --yes "deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy-18 main"
+    - name: install llvm
+      run: |
+        sudo apt update --yes
+        sudo apt install --yes \
+          clang-18 \
+          libc++-18-dev \
+          libc++abi-18-dev \
+          lld-18
+    - name: checkout ndvec repo
+      uses: actions/checkout@v4
+    - name: test
+      run: make CXX=clang-18 test && ./test
+    - name: main
+      run: make CXX=clang-18 main && ./main || [ "$?" -eq 50 ] || echo "expected main to exit with 50" && exit 1
