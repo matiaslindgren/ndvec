@@ -176,12 +176,26 @@ public:
     return (*this - rhs).abs().sum();
   }
 
+  [[nodiscard]] constexpr value_type dot(const ndvec& rhs) const noexcept {
+    return (*this * rhs).sum();
+  }
+
   constexpr void swap(ndvec& other) noexcept { data.swap(other.data); }
 
   constexpr auto&& x(this auto&& self) noexcept { return self.template get<0>(); }
   constexpr auto&& y(this auto&& self) noexcept { return self.template get<1>(); }
   constexpr auto&& z(this auto&& self) noexcept { return self.template get<2>(); }
   constexpr auto&& w(this auto&& self) noexcept { return self.template get<3>(); }
+
+  constexpr ndvec cross(const ndvec& rhs) const noexcept
+    requires(ndim == 3)
+  {
+    return ndvec(
+        y() * rhs.z() - z() * rhs.y(),
+        z() * rhs.x() - x() * rhs.z(),
+        x() * rhs.y() - y() * rhs.x()
+    );
+  }
 
   constexpr ndvec& rotate_left() noexcept
     requires(ndim == 2)
