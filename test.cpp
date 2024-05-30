@@ -1,9 +1,11 @@
 #include <format>
 #include <iostream>
+#include <ranges>
 #include <sstream>
 #include <string>
 #include <typeinfo>
-#include <unordered_map>
+#include <utility>
+#include <vector>
 
 #include "ndvec.hpp"
 
@@ -575,16 +577,18 @@ template <typename T> void test_vec_hash_collisions() {
   using vec = vec2<T>;
   constexpr auto lo{std::numeric_limits<T>::min()};
   constexpr auto hi{std::numeric_limits<T>::max()};
-  std::unordered_map<std::size_t, vec> seen;
+  std::vector<std::pair<std::size_t, vec>> seen;
   for (vec v(lo, lo);; v.x() += 1) {
     for (v.y() = lo;; v.y() += 1) {
       auto h{std::hash<vec>{}(v)};
-      if (seen.contains(h)) {
+      if (auto prev{std::ranges::find_if(seen, [&h](auto&& hv) { return hv.first == h; })
+          };
+          prev != seen.end()) {
         throw std::runtime_error(
-            std::format("hash '{}' collides for {} and {}", h, v, seen.at(h))
+            std::format("hash '{}' collides for {} and {}", h, v, prev->second)
         );
       }
-      seen[h] = v;
+      seen.emplace_back(h, v);
       if (v.y() == hi) {
         break;
       }
