@@ -58,6 +58,8 @@ make CXX=clang-18 test && ./test
 
 ## Advent of Code examples
 
+Examples of using `ndvec` to solve [Advent of Code](https://adventofcode.com) problems.
+
 ### `minmax` over a range of points to find grid corners
 [Year 2018 day 06](https://github.com/matiaslindgren/advent-of-code-cpp/blob/abf152bc6e519a1262b971950e111d8638b72358/src/2018/06.cpp#L6-L21)
 ```c++
@@ -118,7 +120,7 @@ struct Grid {
 
 ### Parse a grid of ASCII digits
 
-[Year 2022 day 08](https://github.com/matiaslindgren/advent-of-code-cpp/blob/abf152bc6e519a1262b971950e111d8638b72358/src/2022/08.cpp#L5C1-L46C2)
+[Year 2022 day 08](https://github.com/matiaslindgren/advent-of-code-cpp/blob/abf152bc6e519a1262b971950e111d8638b72358/src/2022/08.cpp#L33-L46)
 ```c++
 using Vec2 = ndvec::vec2<int>;
 using Grid = std::unordered_map<Vec2, int>;
@@ -198,6 +200,8 @@ struct Grid {
 };
 ```
 
+### 2D grid walk with arbitrary rotation angles
+
 [Year 2020 day 12](https://github.com/matiaslindgren/advent-of-code-cpp/blob/abf152bc6e519a1262b971950e111d8638b72358/src/2020/12.cpp#L5-L62)
 ```c++
 using Vec2 = ndvec::vec2<double>;
@@ -219,7 +223,7 @@ auto deg2rad(int deg) {
   return deg * std::numbers::pi_v<double> / 180.0;
 }
 
-auto rotate(const Vec2& p, int deg) {
+Vec2 rotate(const Vec2& p, int deg) {
   const auto cos{std::round(std::cos(deg2rad(deg)))};
   const auto sin{std::round(std::sin(deg2rad(deg)))};
   return Vec2(p.x() * cos - p.y() * sin, p.x() * sin + p.y() * cos);
