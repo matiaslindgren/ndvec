@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <typeinfo>
+#include <unordered_map>
 
 #include "ndvec.hpp"
 
