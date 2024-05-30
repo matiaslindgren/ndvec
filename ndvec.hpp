@@ -252,7 +252,7 @@ private:
 
   template <std::size_t... axes>
   constexpr auto hash_impl(const vec& v, std::index_sequence<axes...>) const noexcept {
-    return (... | (std::hash<T>{}(v.template get<axes>()) << (slot_width * axes)));
+    return (... ^ (std::hash<T>{}(v.template get<axes>()) << (slot_width * axes)));
   }
 
 public:

@@ -516,7 +516,7 @@ template <typename T> void test_hash() {
     vec2<T> v;
     assert_equal(
         std::hash<vec2<T>>{}(v),
-        hash(0) | (hash(0) << (width / 2)),
+        hash(0) ^ (hash(0) << (width / 2)),
         "vec2() hash"
     );
   }
@@ -524,7 +524,7 @@ template <typename T> void test_hash() {
     vec3<T> v;
     assert_equal(
         std::hash<vec3<T>>{}(v),
-        hash(0) | (hash(0) << (width / 3)) | (hash(0) << (2 * (width / 3))),
+        hash(0) ^ (hash(0) << (width / 3)) ^ (hash(0) << (2 * (width / 3))),
         "vec3() hash"
     );
   }
@@ -532,8 +532,8 @@ template <typename T> void test_hash() {
     vec4<T> v;
     assert_equal(
         std::hash<vec4<T>>{}(v),
-        hash(0) | (hash(0) << (width / 4)) | (hash(0) << (2 * (width / 4)))
-            | (hash(0) << (2 * (width / 4))),
+        hash(0) ^ (hash(0) << (width / 4)) ^ (hash(0) << (2 * (width / 4)))
+            ^ (hash(0) << (2 * (width / 4))),
         "vec4() hash"
     );
   }
@@ -545,7 +545,7 @@ template <typename T> void test_hash() {
     vec2<T> v(0xabc, 0x123);
     assert_equal(
         std::hash<vec2<T>>{}(v),
-        (hash(0xabc) << 0) | (hash(0x123) << (width / 2)),
+        (hash(0xabc) << 0) ^ (hash(0x123) << (width / 2)),
         "vec2(0xabc, 0x123) hash"
     );
   }
@@ -553,8 +553,8 @@ template <typename T> void test_hash() {
     vec3<T> v(0xabc, 0x123, -0xfed);
     assert_equal(
         std::hash<vec3<T>>{}(v),
-        (hash(0xabc) << 0) | (hash(0x123) << (width / 3))
-            | (hash(-0xfed) << ((2 * (width / 3)))),
+        (hash(0xabc) << 0) ^ (hash(0x123) << (width / 3))
+            ^ (hash(-0xfed) << ((2 * (width / 3)))),
         "vec3(0xabc, 0x123, -0xfed) hash"
     );
   }
@@ -562,10 +562,35 @@ template <typename T> void test_hash() {
     vec4<T> v(0xabc, 0x123, 0, -0xfed);
     assert_equal(
         std::hash<vec4<T>>{}(v),
-        (hash(0xabc) << 0) | (hash(0x123) << (width / 4)) | (hash(0) << (2 * (width / 4)))
-            | (hash(-0xfed) << (3 * (width / 4))),
+        (hash(0xabc) << 0) ^ (hash(0x123) << (width / 4)) ^ (hash(0) << (2 * (width / 4)))
+            ^ (hash(-0xfed) << (3 * (width / 4))),
         "vec4(0xabc, 0x123, 0, -0xfed) hash"
     );
+  }
+}
+
+template <typename T> void test_vec_hash_collisions() {
+  std::println("test_vec_hash_collisions<{}>", demangle<T>());
+  using vec = vec2<T>;
+  constexpr auto lo{std::numeric_limits<T>::min()};
+  constexpr auto hi{std::numeric_limits<T>::max()};
+  std::unordered_map<std::size_t, vec> seen;
+  for (vec v(lo, lo);; v.x() += 1) {
+    for (v.y() = lo;; v.y() += 1) {
+      auto h{std::hash<vec>{}(v)};
+      if (seen.contains(h)) {
+        throw std::runtime_error(
+            std::format("hash '{}' collides for {} and {}", h, v, seen.at(h))
+        );
+      }
+      seen[h] = v;
+      if (v.y() == hi) {
+        break;
+      }
+    }
+    if (v.x() == hi) {
+      break;
+    }
   }
 }
 
@@ -852,6 +877,7 @@ template <typename... Ts> void test_vec_hash() { (test_hash<Ts>(), ...); }
 int main() {
   test_vec<short, int, long, long long, float, double, long double>();
   test_vec_hash<short, int, long, long long>();
+  test_vec_hash_collisions<signed char>();
   test_vec_compile_time<short, int, long, long long, float, double, long double>();
   return 0;
 }
